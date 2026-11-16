@@ -124,11 +124,11 @@
 
       <!-- 3. Tafsir Otoritatif & Rasionalisasi -->
       <article class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
-        <div class="flex items-center gap-2.5 mb-3">
+        <div class="flex items-center gap-2.5 mb-4">
           <span class="px-2.5 py-0.5 text-xs font-bold rounded-md bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300">03</span>
           <h2 class="text-base sm:text-lg font-bold">Tafsir Otoritatif & Rasionalisasi</h2>
         </div>
-        <p id="tafsirText" class="text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line"></p>
+        <div id="tafsirList" class="space-y-4"></div>
       </article>
 
       <!-- 4. Protokol Eksekusi -->
@@ -164,7 +164,7 @@
 
     const diagnosaText = document.getElementById('diagnosaText');
     const dalilList = document.getElementById('dalilList');
-    const tafsirText = document.getElementById('tafsirText');
+    const tafsirList = document.getElementById('tafsirList');
     const protokolList = document.getElementById('protokolList');
 
     let lastResult = null;
@@ -263,7 +263,20 @@
         dalilList.appendChild(card);
       });
 
-      tafsirText.textContent = data.tafsir_otoritatif || '';
+      tafsirList.innerHTML = '';
+      const tafsirItems = Array.isArray(data.tafsir_otoritatif)
+        ? data.tafsir_otoritatif
+        : [{ sumber_tafsir: 'Tafsir Muktabar', penjelasan_rasional: data.tafsir_otoritatif || '' }];
+
+      tafsirItems.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800';
+        card.innerHTML = `
+          <div class="text-xs font-bold text-sky-600 dark:text-sky-400 mb-2">${escapeHtml(item.sumber_tafsir)}</div>
+          <p class="text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">${escapeHtml(item.penjelasan_rasional)}</p>
+        `;
+        tafsirList.appendChild(card);
+      });
 
       protokolList.innerHTML = '';
       (data.protokol_eksekusi || []).forEach((step, idx) => {
@@ -284,11 +297,17 @@
       const dalilStr = (data.dalil_resolusi || [])
         .map(d => `${d.surah_ayat}\n${d.teks_arab}\n"${d.terjemahan}"`)
         .join('\n\n');
+      const tafsirItems = Array.isArray(data.tafsir_otoritatif)
+        ? data.tafsir_otoritatif
+        : [{ sumber_tafsir: 'Tafsir Muktabar', penjelasan_rasional: data.tafsir_otoritatif || '' }];
+      const tafsirStr = tafsirItems
+        .map(t => `${t.sumber_tafsir}\n${t.penjelasan_rasional}`)
+        .join('\n\n');
       const protokolStr = (data.protokol_eksekusi || [])
         .map((p, i) => `${i + 1}. ${p}`)
         .join('\n');
 
-      return `QALBULOGIC — HASIL ANALISA\n====================================\n\n[01] DIAGNOSA KOGNITIF\n${data.diagnosa_kognitif}\n\n[02] DALIL RESOLUSI\n${dalilStr}\n\n[03] TAFSIR OTORITATIF & RASIONALISASI\n${data.tafsir_otoritatif}\n\n[04] PROTOKOL EKSEKUSI\n${protokolStr}\n`;
+      return `QALBULOGIC — HASIL ANALISA\n====================================\n\n[01] DIAGNOSA KOGNITIF\n${data.diagnosa_kognitif}\n\n[02] DALIL RESOLUSI\n${dalilStr}\n\n[03] TAFSIR OTORITATIF & RASIONALISASI\n${tafsirStr}\n\n[04] PROTOKOL EKSEKUSI\n${protokolStr}\n`;
     }
 
     document.getElementById('copyBtn').addEventListener('click', () => {
