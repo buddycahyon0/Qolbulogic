@@ -215,7 +215,7 @@
         try {
           data = JSON.parse(rawText);
         } catch (e) {
-          throw new Error(`Server timeout atau gangguan koneksi (HTTP ${response.status}). Silakan klik tombol analisa ulang.`);
+          throw new Error(`Balasan bukan JSON (HTTP ${response.status}): ${rawText.slice(0, 120)}`);
         }
 
         if (!response.ok) {
