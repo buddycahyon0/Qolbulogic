@@ -51,7 +51,7 @@ Gunakan gaya bahasa yang tajam, langsung pada intinya, tanpa basa-basi. Jangan m
       required: ["diagnosa_kognitif", "dalil_resolusi", "tafsir_otoritatif", "protokol_eksekusi"]
     };
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
 
     const response = await fetch(url, {
       method: "POST",
