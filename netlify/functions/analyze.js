@@ -14,37 +14,35 @@ exports.handler = async function (event) {
       return { statusCode: 400, body: JSON.stringify({ error: "Input masalah tidak boleh kosong." }) };
     }
 
-    const systemInstruction = `Posisikan dirimu sebagai seorang psikolog klinis Muslim dan analis perilaku yang sangat pragmatis, logis, dan objektif. Tugas utamamu adalah membedah masalah mental, emosional, atau kebuntuan hidup pengguna, lalu memberikan solusi taktis menggunakan prinsip dasar dan ayat-ayat Al-Quran berdasarkan penafsiran ulama yang otoritatif.
-
-Gunakan gaya bahasa yang tajam, langsung pada intinya, tanpa basa-basi, dan ringkas padat agar cepat dibaca. Jangan memvalidasi kesedihan atau asumsi pengguna jika itu salah. Jadilah rekan diskusi intelektual yang membongkar ilusi mereka dan memaksa mereka melihat realita secara objektif melalui kacamata Al-Quran. Gunakan struktur kalimat penuh dan dilarang menggunakan tanda baca em dash.`;
+    const systemInstruction = `Posisikan dirimu sebagai psikolog klinis Muslim dan analis perilaku yang pragmatis, logis, dan objektif. Bedah masalah pengguna secara ringkas, tajam, langsung pada intinya, dan tanpa basa-basi. Jangan memvalidasi kesedihan atau asumsi yang keliru. Gunakan struktur kalimat penuh dan dilarang menggunakan tanda baca em dash.`;
 
     const responseSchema = {
       type: "OBJECT",
       properties: {
         diagnosa_kognitif: {
           type: "STRING",
-          description: "Analisa psikologis lugas mengenai bias kognitif, ego, ekspektasi palsu, atau kesalahan logika pengguna tanpa mengutip ayat terlebih dahulu."
+          description: "Analisa psikologis lugas (maksimal 3 kalimat) mengenai bias kognitif atau kesalahan logika pengguna tanpa mengutip ayat."
         },
         dalil_resolusi: {
           type: "ARRAY",
-          description: "1 hingga maksimal 2 ayat Al-Quran yang paling presisi meruntuhkan akar masalah.",
+          description: "1 ayat Al-Quran paling presisi untuk meruntuhkan akar masalah.",
           items: {
             type: "OBJECT",
             properties: {
               surah_ayat: { type: "STRING", description: "Nama Surat dan Nomor Ayat, misal: QS. Al-Baqarah: 286" },
-              teks_arab: { type: "STRING", description: "Teks asli bahasa Arab berharakat lengkap" },
-              terjemahan: { type: "STRING", description: "Terjemahan bahasa Indonesia yang akurat" }
+              teks_arab: { type: "STRING", description: "Teks asli bahasa Arab" },
+              terjemahan: { type: "STRING", description: "Terjemahan bahasa Indonesia" }
             },
             required: ["surah_ayat", "teks_arab", "terjemahan"]
           }
         },
         tafsir_otoritatif: {
           type: "STRING",
-          description: "Penjelasan merujuk kitab tafsir muktabar (Tafsir Ibnu Katsir, Tafsir Al-Qurtubi, atau Tafsir At-Thabari) yang dibedah secara rasional dan psikologis untuk mematahkan pola pikir keliru pengguna."
+          description: "Penjelasan ringkas namun tajam (maksimal 4 kalimat) merujuk Tafsir Ibnu Katsir, Al-Qurtubi, atau At-Thabari yang dibedah secara rasional."
         },
         protokol_eksekusi: {
           type: "ARRAY",
-          description: "2 hingga 3 instruksi taktis dan fisik yang harus dilakukan pengguna hari ini juga.",
+          description: "2 hingga 3 instruksi taktis dan fisik yang harus dilakukan hari ini juga.",
           items: { type: "STRING" }
         }
       },
@@ -62,7 +60,10 @@ Gunakan gaya bahasa yang tajam, langsung pada intinya, tanpa basa-basi, dan ring
         generationConfig: {
           responseMimeType: "application/json",
           responseSchema: responseSchema,
-          temperature: 0.4
+          temperature: 0.4,
+          thinkingConfig: {
+            thinkingBudget: 0
+          }
         }
       })
     });
