@@ -210,7 +210,13 @@
           body: JSON.stringify({ problem: text })
         });
 
-        const data = await response.json();
+        const rawText = await response.text();
+        let data;
+        try {
+          data = JSON.parse(rawText);
+        } catch (e) {
+          throw new Error(`Server timeout atau gangguan koneksi (HTTP ${response.status}). Silakan klik tombol analisa ulang.`);
+        }
 
         if (!response.ok) {
           throw new Error(data.error || `Terjadi kesalahan server (${response.status})`);
